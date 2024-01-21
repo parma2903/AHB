@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${client.phone}</td>
                     <td>${client.region}</td>
                     <td>${client.status}</td>
-                    <td><span class="delete-icon" data-client-id="${client.id}">X</span></td>
+                    <td><button class="delete-btn" data-client-id="${client.id}">Удалить</button></td>
                 `;
 
                 tableBody.appendChild(row);
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const newClient = {
             id: getNextClientId(),
             fullname: document.getElementById('fullname').value,
-            created_at: new Date().toISOString(),
+            created_at: new Date().toLocaleDateString('en-GB'),
             phone: document.getElementById('phone').value,
             region: document.getElementById('region').value,
             status: document.getElementById('status').value,
@@ -131,15 +131,16 @@ document.addEventListener('DOMContentLoaded', function () {
         tableBody.innerHTML = '';
 
         data.forEach(client => {
+            const formattedDate = formatDate(client.created_at);
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${client.id}</td>
                 <td class="client-fullname">${client.fullname}</td>
-                <td>${client.created_at}</td>
+                <td>${formattedDate}</td>
                 <td>${client.phone}</td>
                 <td>${client.region}</td>
                 <td>${client.status}</td>
-                <td><td><span class="delete-icon" data-client-id="${client.id}">X</span></td>
+                <td><button class="delete-btn" data-client-id="${client.id}">Удалить</button></td>
                 `;
     
                 tableBody.appendChild(row);    
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
     
-            const deleteIcons = document.querySelectorAll('.delete-icon');
+            const deleteIcons = document.querySelectorAll('.delete-btn');
             deleteIcons.forEach(icon => {
                 icon.addEventListener('click', (event) => {
                     const clientId = event.target.dataset.clientId;
@@ -156,13 +157,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
         }
+
+        function formatDate(isoDateString) {
+            const date = new Date(isoDateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear().toString().slice(2);
+        
+            return `${day}/${month}/${year}`;
+        }
     
         const deleteClientForm = document.getElementById('deleteClientForm');
         const confirmDeleteButton = document.getElementById('confirmDelete');
         const cancelDeleteButton = document.getElementById('cancelDelete');
     
         tableBody.addEventListener('click', function (event) {
-            if (event.target.classList.contains('delete-icon')) {
+            if (event.target.classList.contains('delete-btn')) {
                 const clientIdElement = event.target.closest('tr').querySelector('.client-id');
                 const clientId = clientIdElement ? clientIdElement.textContent : null;        
                 if (clientId !== null) {
