@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const newClient = {
             id: getNextClientId(),
             fullname: document.getElementById('fullname').value,
-            created_at: new Date().toLocaleDateString('en-GB'),
+            created_at: new Date().toISOString(),
             phone: document.getElementById('phone').value,
             region: document.getElementById('region').value,
             status: document.getElementById('status').value,
@@ -127,6 +127,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return lastClient ? lastClient.id + 1 : 1;
     }
 
+    function formatDate(isoDateString) {
+        const date = new Date(isoDateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString().slice(2);
+    
+        return `${day}/${month}/${year}`;
+    }
+
     function updateTableWithData(data) {
         tableBody.innerHTML = '';
 
@@ -158,14 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        function formatDate(isoDateString) {
-            const date = new Date(isoDateString);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const year = date.getFullYear().toString().slice(2);
         
-            return `${day}/${month}/${year}`;
-        }
     
         const deleteClientForm = document.getElementById('deleteClientForm');
         const confirmDeleteButton = document.getElementById('confirmDelete');
