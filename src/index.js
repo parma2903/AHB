@@ -252,8 +252,16 @@ document.addEventListener('DOMContentLoaded', function () {
         editForm.originalClientData = { ...client };        
         document.getElementById('editFullname').value = client.fullname;
         document.getElementById('editPhone').value = client.phone;
-        document.getElementById('editRegion').value = client.region;
-        document.getElementById('editStatus').value = client.status;
+        document.getElementById('editRegion').value = client.region;        
+        const editStatusDropdown = document.getElementById('editStatus');
+        if (editStatusDropdown && client.status) {
+            for (var i = 0; i < editStatusDropdown.options.length; i++) {
+                if (editStatusDropdown.options[i].value === client.status) {
+                    editStatusDropdown.selectedIndex = i;
+                    break
+                }
+            }
+        }
         editForm.style.display = 'block';
         editForm.dataset.clientId = client.id;
     }
