@@ -236,14 +236,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const editForm = document.getElementById('editForm');
-    function fillEditForm(client) {        
+    function fillEditForm(client) {
+        editForm.originalClientData = { ...client };        
         document.getElementById('editFullname').value = client.fullname;
         document.getElementById('editPhone').value = client.phone;
         document.getElementById('editRegion').value = client.region;
         document.getElementById('editStatus').value = client.status;
         editForm.style.display = 'block';
         editForm.dataset.clientId = client.id;
-        console.log("Setting data-client-id in editForm:", client.id);
     }
 
     function showEditForm() {
@@ -263,9 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
         saveChangesBtn.addEventListener('click', function (event) {
-            event.preventDefault();
-            console.log("Attempting to save changes...");
-        
+            event.preventDefault();        
             try {
                 const editedFullname = document.getElementById('editFullname').value;
                 const editedPhone = document.getElementById('editPhone').value;
@@ -293,6 +291,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             } catch (error) {
                 console.error("Error during saving changes:", error);
+            }
+        });
+        const cancelChangesBtn = document.getElementById('cancelChangesBtn');
+        cancelChangesBtn.addEventListener('click', function () {
+            event.preventDefault();
+            const clientId = editForm.dataset.clientId;
+            const originalClient = clientsDataCopy.find(client => client.id === parseInt(clientId));
+
+            if (originalClient && editForm.originalClientData) {
+                originalClient.fullname = editForm.originalClientData.fullname;
+                originalClient.phone = editForm.originalClientData.phone;
+                originalClient.region = editForm.originalClientData.region;
+                originalClient.status = editForm.originalClientData.status;
+
+
+                editForm.style.display = 'none';
+                updateTableWithData(clientsDataCopy);
+            } else {
+                console.error("Unable to cancel changes. Client or original data not found.");
             }
         });
     }   
