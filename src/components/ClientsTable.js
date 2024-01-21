@@ -10,7 +10,8 @@ function createClientsTable() {
                 <th>Телефон</th>
                 <th>Регион</th>
                 <th>Статус</th>
-                <th>Удалить</th>
+                <th>Редавтирование</th>
+                <th>Удаление</th>
             </tr>
         </thead>
         <tbody>

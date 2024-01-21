@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${client.phone}</td>
                     <td>${client.region}</td>
                     <td>${client.status}</td>
+                    <td><button class="edit-btn" data-client-id="${client.id}">Редактировать</button></td>
                     <td><button class="delete-btn" data-client-id="${client.id}">Удалить</button></td>
                 `;
 
@@ -87,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         addClient(newClient);
         addClientForm.reset();
         addClientForm.style.display = 'none';
+        return false;
     });
 
     const fullnameInput = document.getElementById('fullname');
@@ -143,76 +145,157 @@ document.addEventListener('DOMContentLoaded', function () {
             const formattedDate = formatDate(client.created_at);
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${client.id}</td>
-                <td class="client-fullname">${client.fullname}</td>
-                <td>${formattedDate}</td>
-                <td>${client.phone}</td>
-                <td>${client.region}</td>
-                <td>${client.status}</td>
-                <td><button class="delete-btn" data-client-id="${client.id}">Удалить</button></td>
-                `;
-    
-                tableBody.appendChild(row);    
-                row.querySelector('.client-fullname').addEventListener('click', () => {
-                    openClientPage(client.id);
-                });
-            });
-    
-            const deleteIcons = document.querySelectorAll('.delete-btn');
-            deleteIcons.forEach(icon => {
-                icon.addEventListener('click', (event) => {
-                    const clientId = event.target.dataset.clientId;
-                    showDeleteConfirmation(clientId);
-                });
-            });
-        }
+            <td>${client.id}</td>
+            <td class="client-fullname">${client.fullname}</td>
+            <td>${formattedDate}</td>
+            <td>${client.phone}</td>
+            <td>${client.region}</td>
+            <td>${client.status}</td>
+            <td><button class="edit-btn" data-client-id="${client.id}">Редактировать</button></td>
+            <td><button class="delete-btn" data-client-id="${client.id}">Удалить</button></td>
+            `;
 
-        
-    
-        const deleteClientForm = document.getElementById('deleteClientForm');
-        const confirmDeleteButton = document.getElementById('confirmDelete');
-        const cancelDeleteButton = document.getElementById('cancelDelete');
-    
-        tableBody.addEventListener('click', function (event) {
-            if (event.target.classList.contains('delete-btn')) {
-                const clientIdElement = event.target.closest('tr').querySelector('.client-id');
-                const clientId = clientIdElement ? clientIdElement.textContent : null;        
-                if (clientId !== null) {
+            tableBody.appendChild(row);    
+            row.querySelector('.client-fullname').addEventListener('click', () => {
+                openClientPage(client.id);
+            });
+
+            const editButton = row.querySelector('.edit-btn');
+            const deleteButton = row.querySelector('.delete-btn');
+
+            if (editButton) {
+                editButton.addEventListener('click', () => {
+                    const clientId = editButton.dataset.clientId;
+                    const clientToEdit = clientsDataCopy.find(client => client.id === parseInt(clientId));
+                    fillEditForm(clientToEdit);
+                    showEditForm();
+                });
+            }
+
+            if (deleteButton) {
+                deleteButton.addEventListener('click', () => {
+                    const clientId = deleteButton.dataset.clientId;
                     showDeleteConfirmation(clientId);
-                }
+                });
             }
         });
-    
-        confirmDeleteButton.addEventListener('click', function () {
-            const clientId = deleteClientForm.dataset.clientId;
-            deleteClient(clientId);
-            hideDeleteConfirmationPopup();
-        });    
+    }        
 
-        cancelDeleteButton.addEventListener('click', function () {
-            hideDeleteConfirmationPopup();
-        });    
+    const deleteClientForm = document.getElementById('deleteClientForm');
+    const confirmDeleteButton = document.getElementById('confirmDelete');
+    const cancelDeleteButton = document.getElementById('cancelDelete');
 
-        function deleteClient(clientId) {
-            let updatedClientsData = [...clientsDataCopy].filter(client => client.id !== Number(clientId));
-            updateTableWithData(updatedClientsData);
-            clientsDataCopy = updatedClientsData;
-        }    
-
-        function showDeleteConfirmation(clientId) {
-            const deleteClientPopup = document.getElementById('deleteClientPopup');
-            const deleteConfirmationText = document.getElementById('deleteConfirmationText');
-        
-            deleteConfirmationText.textContent = `Вы действительно хотите удалить клиента с ID ${clientId}?`;
-            deleteClientForm.dataset.clientId = clientId;
-            deleteClientPopup.style.display = 'flex';
-        }    
-
-        function hideDeleteConfirmationPopup() {
-            const deleteClientPopup = document.getElementById('deleteClientPopup');
-            deleteClientPopup.style.display = 'none';
-            deleteClientForm.dataset.clientId = null;
+    tableBody.addEventListener('click', function (event) {
+        if (event.target.classList.contains('delete-btn')) {
+            const clientIdElement = event.target.closest('tr').querySelector('.client-id');
+            const clientId = clientIdElement ? clientIdElement.textContent : null;        
+            if (clientId !== null) {
+                showDeleteConfirmation(clientId);
+            }
+        } else if (event.target.classList.contains('edit-btn')) {
+            const clientIdElement = event.target.closest('tr').querySelector('.client-id');
+            const clientId = clientIdElement ? clientIdElement.textContent : null;
+            if (clientId !== null) {
+                const clientId = event.target.dataset.clientId;
+                const clientToEdit = clientsDataCopy.find(client => client.id === parseInt(clientId));
+                fillEditForm(clientToEdit);
+                showEditForm();
+            }
         }
     });
+
+    confirmDeleteButton.addEventListener('click', function () {
+        const clientId = deleteClientForm.dataset.clientId;
+        deleteClient(clientId);
+        hideDeleteConfirmationPopup();
+    });    
+
+    cancelDeleteButton.addEventListener('click', function () {
+        hideDeleteConfirmationPopup();
+    });    
+
+    function deleteClient(clientId) {
+        let updatedClientsData = [...clientsDataCopy].filter(client => client.id !== Number(clientId));
+        updateTableWithData(updatedClientsData);
+        clientsDataCopy = updatedClientsData;
+    }    
+
+    function showDeleteConfirmation(clientId) {
+        const deleteClientPopup = document.getElementById('deleteClientPopup');
+        const deleteConfirmationText = document.getElementById('deleteConfirmationText');
+    
+        deleteConfirmationText.textContent = `Вы действительно хотите удалить клиента с ID ${clientId}?`;
+        deleteClientForm.dataset.clientId = clientId;
+        deleteClientPopup.style.display = 'flex';
+    }    
+
+    function hideDeleteConfirmationPopup() {
+        const deleteClientPopup = document.getElementById('deleteClientPopup');
+        deleteClientPopup.style.display = 'none';
+        deleteClientForm.dataset.clientId = null;
+    }
+
+    const editForm = document.getElementById('editForm');
+    function fillEditForm(client) {        
+        document.getElementById('editFullname').value = client.fullname;
+        document.getElementById('editPhone').value = client.phone;
+        document.getElementById('editRegion').value = client.region;
+        document.getElementById('editStatus').value = client.status;
+        editForm.style.display = 'block';
+        editForm.dataset.clientId = client.id;
+        console.log("Setting data-client-id in editForm:", client.id);
+    }
+
+    function showEditForm() {
+        const editStatusDropdown = document.getElementById('editStatus');
+        editStatusDropdown.addEventListener('mousedown', function () {
+            this.size = 2;
+        });
+        editStatusDropdown.addEventListener('change', function () {
+            this.blur();
+        });
+        editStatusDropdown.addEventListener('blur', function () {
+            this.size = 1;
+        });
+        document.addEventListener('mousedown', function (event) {
+            if (!editStatusDropdown.contains(event.target)) {
+                editStatusDropdown.size = 1;
+            }
+        });
+        saveChangesBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            console.log("Attempting to save changes...");
+        
+            try {
+                const editedFullname = document.getElementById('editFullname').value;
+                const editedPhone = document.getElementById('editPhone').value;
+                const editedRegion = document.getElementById('editRegion').value;
+                const editedStatus = document.getElementById('editStatus').value;
+        
+                const editedClientId = editForm.dataset.clientId;
+        
+                if (editedClientId !== undefined && editedClientId !== null) {
+                    const editedClient = clientsDataCopy.find(client => client.id === parseInt(editedClientId));
+        
+                    if (editedClient) {        
+                        editedClient.fullname = editedFullname;
+                        editedClient.phone = editedPhone;
+                        editedClient.region = editedRegion;
+                        editedClient.status = editedStatus;
+        
+                        editForm.style.display = 'none';
+                        updateTableWithData(clientsDataCopy);
+                    } else {
+                        console.error("Client not found for editing. ID:", editedClientId);
+                    }
+                } else {
+                    console.error("Invalid or undefined client ID:", editedClientId);
+                }
+            } catch (error) {
+                console.error("Error during saving changes:", error);
+            }
+        });
+    }   
+});
     
 

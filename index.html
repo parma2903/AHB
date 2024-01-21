@@ -46,6 +46,21 @@
             </div>
         </div>
       </div>
+      <form id="editForm" style="display: none;">
+        <label for="editFullname">ФИО:</label>
+        <input type="text" id="editFullname" name="editFullname">    
+        <label for="editPhone">Телефон:</label>
+        <input type="text" id="editPhone" name="editPhone">    
+        <label for="editRegion">Регион:</label>
+        <input type="text" id="editRegion" name="editRegion">
+        <select id="editStatus" name="status">
+          <option value="активен">Активен</option>
+          <option value="неактивен">Неактивен</option>
+          <option value="приостановлен">Приостановлен</option>
+        </select>
+        <button id="saveChangesBtn">Сохранить</button>
+        <button id="cancelChangesBtn">Отменить</button>
+    </form>
     <script src="src/components/SearchPanel.js"></script>
     <script src="src/components/ClientsTable.js"></script>
     <script src="/dist/bundle.js"></script>
