@@ -119,6 +119,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    const editFullname = document.getElementById('editFullname');
+    const editFullnameMask = new Inputmask({ regex: "[А-Яа-яЁё ]*", placeholder: '' });
+    editFullnameMask.mask(editFullname);
+
+    const editRegionInput = document.getElementById('editRegion');
+    const editRegionMask = new Inputmask({ regex: "[А-Яа-яЁё ]*", placeholder: '' });
+    editRegionMask.mask(editRegionInput);
+
+    const editPhoneInput = document.getElementById('editPhone');
+    const editPhoneMask = new Inputmask({ regex: "[0-9]*", placeholder: '' });
+    editPhoneMask.mask(editPhoneInput);
+
     function addClient(client) {
         clientsDataCopy.push(client);
         updateTableWithData(clientsDataCopy);
