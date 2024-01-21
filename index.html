@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/style.css">
+    <title>AHB</title>
+  </head>
+  <body id="main">
+    <div class="left-panel">
+      <div class="left-panel-item">Главная</div>
+      <div class="left-panel-item">О нас</div>
+      <div class="left-panel-item">Сервисы</div>
+      <div class="left-panel-item">Контакты</div>
+    </div>
+    <div class="right-panel">
+      <div id="app">
+        <search-panel></search-panel>
+        <clients-table></clients-table>
+      </div>
+      <button id="addClientButton">Добавить нового клиента</button>
+      <form id="addClientForm" style="display: none;">
+          <label for="fullname">ФИО:</label>
+          <input type="text" id="fullname" required>
+          
+          <label for="phone">Телефон:</label>
+          <input type="text" id="phone" required>
+          
+          <label for="region">Регион:</label>
+          <input type="text" id="region" required>
+
+          <select id="status" name="status" required>
+            <option value="активен">Активен</option>
+            <option value="неактивен">Неактивен</option>
+            <option value="приостановлен">Приостановлен</option>
+          </select>
+          
+          <button type="submit">Добавить</button>
+      </form>
+      <div id="deleteClientPopup" class="popup-container">
+        <div id="deleteClientForm" class="delete-client-form">
+            <p id="deleteConfirmationText">Вы действительно хотите удалить клиента?</p>
+            <div>
+                <button id="confirmDelete">Да</button>
+                <button id="cancelDelete">Нет</button>
+            </div>
+        </div>
+      </div>
+    <script src="src/components/SearchPanel.js"></script>
+    <script src="src/components/ClientsTable.js"></script>
+    <script src="/dist/bundle.js"></script>
+  </body>
+</html>
